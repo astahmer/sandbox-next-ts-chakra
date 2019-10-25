@@ -1,0 +1,33 @@
+version: "3"
+services:
+  nextjs:
+    container_name: ${PROJECT_NAME}-nextjs
+    build:
+      context: ./
+      dockerfile: ./docker/Dockerfile
+    command: npm run dev
+    volumes:
+      - .:/usr/app/
+      - ./node_modules/:/usr/app/node_modules
+    ports:
+      - 5000:5000
+      # - 9231:9229
+
+  # Only used to install vendors
+  vendors:
+    build:
+      context: ./
+      dockerfile: ./docker/install/Dockerfile
+    container_name: ${PROJECT_NAME}-vendors
+    volumes:
+      - .:/usr/app/
+      - ./node_modules/:/usr/app/node_modules
+
+  # Only used to enter container & install packages
+  term:
+    image: node:10-alpine
+    command: tail -f /dev/null
+    container_name: ${PROJECT_NAME}-term
+    volumes:
+      - .:/usr/app/
+      - ./node_modules/:/usr/app/node_modules
